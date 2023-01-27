@@ -1,17 +1,15 @@
 import { TextureLoader } from "three";
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-
 const scene = new THREE.Scene();
+
 const image_radius = 200;
 const number_of_images = 8;
 const radius = 600;
 const radian_interval = (6.0 * Math.PI) / number_of_images;
-const center_of_wheel = {
-                            x: 0,
-                            y: 0
-                        }
+const center_of_wheel = { x: 0, y: 0 }
 
 
 const groupCards = new THREE.Group();
@@ -23,7 +21,27 @@ let material = null;
 let circle = null;
 let mesh = null;
 
-let pickedVinyl;
+
+let vinylNameOrigin;
+let vinylNameFirst;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 for (let i = 0; i < number_of_images; i++) {
@@ -61,8 +79,6 @@ for (let i = 0; i < number_of_images; i++) {
 }
 
 
-
-
 // Specify the portion of the scene visible at any time (in degrees)
 let fieldOfView = 75;
 
@@ -92,6 +108,10 @@ window.addEventListener('wheel', event => {
 
 
 
+
+
+
+
 function onPointerMove( event ) {
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
@@ -106,7 +126,7 @@ function onPointerReset( event ){
 }
 
 
-function render() {
+function raycasters() {
 	// update the picking ray with the camera and pointer position
 	raycaster.setFromCamera( pointer, camera );
 
@@ -115,24 +135,32 @@ function render() {
     // for 문이 아니라 내가 클릭한 것으로 수정
     if (intersects.length == 1){
         intersects[0].object.scale.set(1.5, 1.5, 1.5);
-        onPointerReset();
-    } 
-
-	renderer.render( scene, camera );
-    
+        vinylNameFirst = intersects[0].object.name
+        onPointerReset(); // pointer reset
+    }
+    if (vinylNameFirst != undefined) {
+        for (let i = 0; i < groupCards.children.length; i ++) {
+            if (vinylNameFirst != i) {
+                groupCards.children[i].material.visible = false
+                groupCards.children[vinylNameFirst].material.visible = true
+            }
+        }
+    }
 }
 
+
+
+function render() {
+    renderer.render( scene, camera );
+}
 
 
 function animate() {
     requestAnimationFrame(animate);
     window.addEventListener( 'click', onPointerMove );
-    window.requestAnimationFrame(render);
-    renderer.render(scene, camera);
+    raycasters();
     render();
-
 }
-
 
 
 
@@ -142,7 +170,4 @@ animate();
 
 // window.addEventListener( 'mouseup', onPointerMove );
 // window.requestAnimationFrame(render);
-
-
-export { pickedVinyl }
 

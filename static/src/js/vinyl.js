@@ -1,4 +1,7 @@
-import { pickedVinyl } from "./wheel";
 
+// let vinylName = 0;
 
-console.log('pickedVinyl', pickedVinyl);
+// vinylName = raycasters();
+
+// console.log(vinylName);
+
