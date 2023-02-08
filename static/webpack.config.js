@@ -4,9 +4,8 @@ const path = require('path')
 module.exports = {
     // source file location
     entry: {
-        main: path.resolve(__dirname, "src", "js", "example.js"),
-        wheel: path.resolve(__dirname, "src", "js", "wheel.js"),
-        vinyl: path.resolve(__dirname, "src", "js", "vinyl.js")
+        audio: path.resolve(__dirname, "src", "js", "audio.js"),
+        circle: path.resolve(__dirname, "src", "js", "circle.js")
     },
     mode: "development",
     target: "web",

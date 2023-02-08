@@ -10,9 +10,9 @@ app = Flask(__name__)
 def main():
   return render_template('index.html')
 
-@app.route('/vinyl')
-def vinyl():
-  return render_template('vinyl.html')
+# @app.route('/vinyl')
+# def vinyl():
+#   return render_template('vinyl.html')
 
 
 if __name__ == '__main__':
