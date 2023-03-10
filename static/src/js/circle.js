@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { energy, dataArray, analyser } from './audio.js'
+import { energy, dataArray, analyser, pitchDetector } from './audio.js'
 
 let controls;
 let camera, scene, renderer;
@@ -118,6 +118,7 @@ function animate() {
     // music rendering
     if (dataArray){
       analyser.getByteFrequencyData(dataArray);
+      pitchDetector();
       // geometry rendering (firstly, delete the basic geometry in the base.)
       deleteBasics();
       createCircle();
@@ -126,11 +127,7 @@ function animate() {
     }
   }
 
-// // animate function
-// function animate() {
-//     requestAnimationFrame(animate);
-//     render();
-//   }
+
 
 
 // render function

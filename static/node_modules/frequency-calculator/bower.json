@@ -1,0 +1,21 @@
+{
+  "name": "frequency-calculator",
+  "main": "frequency-calculator.js",
+  "homepage": "https://github.com/Sambego/frequency-calculator",
+  "authors": [
+    "Sambego <sambellen@gmail.com>"
+  ],
+  "description": "A small, simple library to calculate the frequency of a music note.",
+  "moduleType": [],
+  "keywords": [
+    "audio"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
