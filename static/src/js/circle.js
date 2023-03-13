@@ -87,8 +87,6 @@ function createCircle(){
     }
 
     let size = custom_energy;
-    // console.log('energy', energy)
-    // console.log('size', size)
 
     geometry = new THREE.CircleGeometry( size, 60 );
     material = new THREE.MeshBasicMaterial();
@@ -110,7 +108,6 @@ function createCircle(){
 
 function animate() {
   requestAnimationFrame(animate);
-  
   // 여기를 기점으로 색깔 등 요소 변경을 추가하면됨
   FrameRate = FrameRate + 1
   if (FrameRate % 4 == 0){
