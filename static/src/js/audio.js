@@ -2,51 +2,86 @@
 import { PitchDetector } from "pitchy";
 import FrequencyMap from "note-frequency-map";
 
+let audioContext, analyser, microphone, javascriptNode
+let dataArray, bufferLength, energy, src
+
+// source = audioContext.createMediaStreamSource(stream);
+// scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+// scriptProcessor.onaudioprocess = (event) => {
+// const buffer = event.inputBuffer.getChannelData(0);
+// // ~_~
+// // };
+
+//   source.connect(scriptProcessor);
+//   scriptProcessor.connect(audioContext.destination);
+
+navigator.getUserMedia = navigator.getUserMedia ||
+  navigator.webkitGetUserMedia ||
+  navigator.mozGetUserMedia;
+if (navigator.getUserMedia) {
+  navigator.getUserMedia({
+      audio: true
+    },
+    function(stream) {
+      audioContext = new AudioContext();
+      analyser = audioContext.createAnalyser();
+      microphone = audioContext.createMediaStreamSource(stream);
+
+      javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+      analyser.smoothingTimeConstant = 0.8;
+      analyser.fftSize = 1024;
+
+      microphone.connect(analyser);
+      analyser.connect(javascriptNode);
+      javascriptNode.connect(audioContext.destination);
+
+      console.log(microphone)
+
+    //   canvasContext = $("#canvas")[0].getContext("2d");
+
+      javascriptNode.onaudioprocess = function() {
+          var array = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(array);
+          var values = 0;
+          bufferLength = analyser.frequencyBinCount;
+          dataArray = new Uint8Array(bufferLength);
 
 
-let file, audio;
-var audio_context;
+          var length = array.length;
+          for (var i = 0; i < length; i++) {
+            values += (array[i]);
+          }
+
+          var average = values / length;
+          energy = average * 0.09
 
 
-let analyser, src, bufferLength, dataArray;
-let chroma, maxChroma, energy, amplitudeSpectrum;
+        //   energy = 0;
 
 
+        // const meyda_analyser = Meyda.createMeydaAnalyzer({
 
+        //     audioContext: audioContext,
+        //     source: microphone,
+        //     buffersize: 512,
+        //     featureExtractors: ["energy"],
+        //     callback: (features) => {
+        //         energy = features['energy']
+        //         console.log('energy', energy)
+        //     }
+        // })
+        // meyda_analyser.start();
 
-// LOAD MUSIC (vizInit)
+        } // end fn stream
+    },
+    function(err) {
+      console.log("The following error occured: " + err.name)
+    });
 
-function FileInit() {
-
-    file = document.getElementById("thefile");
-    audio = document.getElementById("audio");
-    audio_context = audio_context || new AudioContext();
-
-  }
-
-
-
-
-
-
-
-function FileChange(){
-
-    file.onchange = function(){
-
-        audio_context.resume();
-        audio.load(); //load the new source
-
-        let files = this.files;
-
-        audio.src = URL.createObjectURL(files[0]);
-        analyser  = audio_context.createAnalyser();
-        src = audio_context.createMediaElementSource(audio)
-        audio.volume = 0.4;
-
-        AnalyzerPlay(audio_context, src);
-    }
-
+} else {
+  console.log("getUserMedia not supported");
 }
 
 
@@ -63,51 +98,13 @@ function updatePitch(analyser, detector, input, sampleRate) {
 function pitchDetector(){
     const detector = PitchDetector.forFloat32Array(analyser.fftSize);
     const input = new Float32Array(detector.inputLength);
-    updatePitch(analyser, detector, input, audio_context.sampleRate);
+    updatePitch(analyser, detector, input, audioContext.sampleRate);
 }
 
 
 
 
 
-function AnalyzerPlay(audio_context, src) {
-
-    analyser = audio_context.createAnalyser();
-    src.connect(analyser);
-    analyser.connect(audio_context.destination);
-    analyser.fftSize = 512;
-    bufferLength = analyser.frequencyBinCount;
-    dataArray = new Uint8Array(bufferLength);
-
-    energy = 0;
 
 
-    const meyda_analyser = Meyda.createMeydaAnalyzer({
-
-        audioContext: audio_context,
-        source: src,
-        buffersize: 1024,
-        featureExtractors: ["energy"],
-        callback: (features) => {
-            energy = features['energy']
-        }
-    })
-    meyda_analyser.start();
-
-}
-
-
-
-FileInit();
-FileChange();
-
-
-
-
-
-
-
-
-
-
-export { audio, audio_context, src, analyser, energy, bufferLength, dataArray, pitchDetector  }
+export { audioContext, src, analyser, energy, bufferLength, dataArray, pitchDetector }

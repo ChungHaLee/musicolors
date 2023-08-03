@@ -26,7 +26,7 @@ function init() {
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(900, 700);
+    renderer.setSize(1200, 900);
     
     camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 2000);
     camera.position.set(1, 10, 30);
@@ -61,7 +61,7 @@ function init() {
 
 
 function createCircle_Vanilla(){
-    geometry = new THREE.CircleGeometry( 10, 60 );
+    geometry = new THREE.CircleGeometry( 5, 30 );
     material = new THREE.MeshBasicMaterial();
 
 
@@ -78,15 +78,16 @@ function createCircle_Vanilla(){
 
 
 function createCircle(){
-    let custom_energy = energy * 5;
+    // let custom_energy = energy * 5;
   
-    if(custom_energy > 15){
-      custom_energy = 15;
-    } else if(custom_energy < 10){
-      custom_energy = custom_energy / 2 + 5
-    }
+    // if(custom_energy > 15){
+    //   custom_energy = 15;
+    // } else if(custom_energy < 10){
+    //   custom_energy = custom_energy / 2 + 5
+    // }
 
-    let size = custom_energy;
+    let size = energy * 1.5;
+    console.log(size)
 
     geometry = new THREE.CircleGeometry( size, 60 );
     material = new THREE.MeshBasicMaterial();
