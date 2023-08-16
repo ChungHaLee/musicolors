@@ -1,5 +1,6 @@
 'use strict';
 import { PitchDetector } from "pitchy";
+import * as Meyda from "meyda";
 import FrequencyMap from "note-frequency-map";
 
 let audioContext, analyser, microphone, javascriptNode
@@ -37,7 +38,6 @@ if (navigator.getUserMedia) {
       analyser.connect(javascriptNode);
       javascriptNode.connect(audioContext.destination);
 
-      console.log(microphone)
 
     //   canvasContext = $("#canvas")[0].getContext("2d");
 
@@ -55,24 +55,20 @@ if (navigator.getUserMedia) {
           }
 
           var average = values / length;
-          energy = average * 0.09
+          // energy = average * 0.09
 
+        const meyda_analyser = Meyda.createMeydaAnalyzer({
 
-        //   energy = 0;
-
-
-        // const meyda_analyser = Meyda.createMeydaAnalyzer({
-
-        //     audioContext: audioContext,
-        //     source: microphone,
-        //     buffersize: 512,
-        //     featureExtractors: ["energy"],
-        //     callback: (features) => {
-        //         energy = features['energy']
-        //         console.log('energy', energy)
-        //     }
-        // })
-        // meyda_analyser.start();
+            audioContext: audioContext,
+            source: microphone,
+            buffersize: 256,
+            featureExtractors: ["energy"],
+            callback: (features) => {
+                energy = features['energy']
+                // console.log('energy', energy)
+            }
+        })
+        meyda_analyser.start();
 
         } // end fn stream
     },

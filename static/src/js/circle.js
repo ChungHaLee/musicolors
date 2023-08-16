@@ -86,8 +86,9 @@ function createCircle(){
     //   custom_energy = custom_energy / 2 + 5
     // }
 
-    let size = energy * 1.5;
-    console.log(size)
+    let size = energy * 1.7;
+    
+
 
     geometry = new THREE.CircleGeometry( size, 60 );
     material = new THREE.MeshBasicMaterial();
