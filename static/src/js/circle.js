@@ -39,7 +39,7 @@ function init() {
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(1400, 900);
+    renderer.setSize(1200, 900);
     
     camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 2000);
     camera.position.set(1, 10, 30);
@@ -139,23 +139,26 @@ function HSLToHex(h,s,l) {
 
 function createCircle(){
 
-    size = energy * 1.1;
-    if (size < 0.8){
-      size = 0.8
-    }
+    size = energy;
+    console.log('소리 크기', size)
+    // if (size < 0.4){
+    //   size = 0.4
+    // } else {
+    //   size * 1.2
+    // }
 
     hue = warmth
     saturation = richness * 100
     luminance = sharpness * 100
-    console.log(saturation)
+    // console.log(saturation)
 
 
     hex1 = HSLToHex(hue, saturation, luminance);
-    hex2 = HSLToHex(360-hue, 100, 50)
+    hex2 = HSLToHex(0, 100, 90)
     
-
+    // console.log('size', size*2)
     // geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
-    geometry = new THREE.SphereGeometry(size*1.3, 128, 128);
+    geometry = new THREE.SphereGeometry(size * 3, 128, 128);
 
     material = new THREE.ShaderMaterial({
       uniforms: {
@@ -164,9 +167,6 @@ function createCircle(){
         },
         color2: {
           value: new THREE.Color(hex2)
-        },
-        edgeOffset: {
-          value: 10.0
         }
       },
       vertexShader: `
@@ -224,9 +224,9 @@ function update() {
   for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
     vertex.fromBufferAttribute(positionAttribute, vertexIndex);
     
-    // Check if the size is greater than 0.8 before applying Perlin noise
-    if (size > 0.8) {
-      var noiseValue = noise.perlin3(vertex.x * scalingFactor + time, vertex.y * scalingFactor, vertex.z * scalingFactor);
+    // Check if the size is greater than 1 before applying Perlin noise
+    if (size > 1) {
+      var noiseValue = noise.perlin3(vertex.x * scalingFactor, vertex.y * scalingFactor, vertex.z * scalingFactor);
       vertex.normalize().multiplyScalar(1 + 0.3 * noiseValue);
 
       if (!isNaN(noiseValue) && isFinite(vertex.x) && isFinite(vertex.y) && isFinite(vertex.z)) {
@@ -236,10 +236,10 @@ function update() {
       }
 
     } else {
-      // If size is less than or equal to 0.8, keep the original position
+      // console.log('소리 작음')
+      // If size is less than or equal to 1, keep the original position
       positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
-      hex1 = HSLToHex(265, 0, 100);
-      hex2 = HSLToHex(265, 0, 30);
+
     }
   }
 
@@ -258,11 +258,13 @@ function animate() {
   if (FrameRate % 4 == 0) {
     // music rendering
     if (dataArray) {
+
       analyser.getByteFrequencyData(dataArray);
       pitchDetector();
       // geometry rendering (firstly, delete the basic geometry in the base.)
       deleteBasics();
       createCircle();
+
     }
   }
 
