@@ -8,7 +8,7 @@ let dataArray, bufferLength, perceptualSpread,
     spectralFlux, perceptualSharpness, spectralFlatness, spectralKurtosis, src
 
 
-let energy, roughness
+let energy, roughness, warmth, richness, sharpness
 
 // source = audioContext.createMediaStreamSource(stream);
 // scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
@@ -59,17 +59,20 @@ if (navigator.getUserMedia) {
 
           audioContext: audioContext,
           source: microphone,
-          buffersize: 256,
+          buffersize: 720,
           featureExtractors: ["energy", "perceptualSpread", "perceptualSharpness", 
-                              "spectralFlatness", "spectralKurtosis"],
-          callback: (features) => {
-              energy = features['energy']
-              roughness = features['spectralFlatness']
+                              "spectralFlatness", "spectralKurtosis", "spectralCentroid"],
+          callback: (features) => { // mapping rules
+              energy = features['energy'] // size
+              roughness = features['spectralFlatness']  // perlin noise
+              warmth = features['spectralCentroid']     // hue
+              richness = features['perceptualSpread']   // saturation
+              sharpness = features['perceptualSharpness'] // luminance
+              
               // perceptualSpread = features['perceptualSpread']
               // perceptualSharpness = features['perceptualSharpness']
               // spectralFlatness = features['spectralFlatness']
-              spectralKurtosis = features['spectralKurtosis']
-              // console.log(spectralKurtosis)
+              // spectralKurtosis = features['spectralKurtosis']
           }
       })
       meyda_analyser.start();
@@ -105,4 +108,4 @@ function pitchDetector(){
 
 
 
-export { audioContext, src, analyser, energy, roughness, bufferLength, dataArray, pitchDetector }
+export { audioContext, src, analyser, energy, roughness, warmth, richness, sharpness, bufferLength, dataArray, pitchDetector }

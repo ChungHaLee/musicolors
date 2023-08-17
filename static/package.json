@@ -30,6 +30,7 @@
         "@tonaljs/scale-type": "^4.8.0",
         "@tonaljs/time-signature": "^4.8.0",
         "audiomotion-analyzer": "^3.6.1",
+        "complementary-colors": "^1.0.6",
         "essentia.js": "^0.1.3",
         "fftjs": "0.0.4",
         "frequency-calculator": "0.0.8",
