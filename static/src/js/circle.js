@@ -20,10 +20,10 @@ let ambientLight, spotLight;
 let size;
 
 let hue, saturation, luminance;
+let hex1, hex2;
+
 
 var noise = new Noise(Math.random());
-
-
 
 
 // BASIC EVENTS
@@ -140,8 +140,8 @@ function HSLToHex(h,s,l) {
 function createCircle(){
 
     size = energy * 1.1;
-    if (size < 0.5){
-      size = 0.5
+    if (size < 0.8){
+      size = 0.8
     }
 
     hue = warmth
@@ -150,12 +150,12 @@ function createCircle(){
     console.log(saturation)
 
 
-    let hex1 = HSLToHex(hue, saturation, luminance);
-    let hex2 = HSLToHex(360-hue, 100, 50)
+    hex1 = HSLToHex(hue, saturation, luminance);
+    hex2 = HSLToHex(360-hue, 100, 50)
     
 
     // geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
-    geometry = new THREE.SphereGeometry(size*2, 128, 128);
+    geometry = new THREE.SphereGeometry(size*1.3, 128, 128);
 
     material = new THREE.ShaderMaterial({
       uniforms: {
@@ -224,8 +224,8 @@ function update() {
   for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
     vertex.fromBufferAttribute(positionAttribute, vertexIndex);
     
-    // Check if the size is greater than 0.5 before applying Perlin noise
-    if (size > 0.5) {
+    // Check if the size is greater than 0.8 before applying Perlin noise
+    if (size > 0.8) {
       var noiseValue = noise.perlin3(vertex.x * scalingFactor + time, vertex.y * scalingFactor, vertex.z * scalingFactor);
       vertex.normalize().multiplyScalar(1 + 0.3 * noiseValue);
 
@@ -236,7 +236,7 @@ function update() {
       }
 
     } else {
-      // If size is less than or equal to 0.5, keep the original position
+      // If size is less than or equal to 0.8, keep the original position
       positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
       hex1 = HSLToHex(265, 0, 100);
       hex2 = HSLToHex(265, 0, 30);
