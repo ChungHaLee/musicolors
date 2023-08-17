@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { energy, dataArray, analyser, pitchDetector } from './audio.js'
+import { energy, roughness, dataArray, analyser, pitchDetector } from './audio.js'
 
 let controls;
 let camera, scene, renderer;
@@ -10,6 +10,8 @@ let FrameRate = 0;
 let group, geometry, material, compoCenter;
 let pointLight;
 let ambientLight, spotLight;
+
+let size;
 
 
 
@@ -26,7 +28,7 @@ function init() {
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(1200, 900);
+    renderer.setSize(1400, 900);
     
     camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 2000);
     camera.position.set(1, 10, 30);
@@ -78,19 +80,15 @@ function createCircle_Vanilla(){
 
 
 function createCircle(){
-    // let custom_energy = energy * 5;
-  
-    // if(custom_energy > 15){
-    //   custom_energy = 15;
-    // } else if(custom_energy < 10){
-    //   custom_energy = custom_energy / 2 + 5
-    // }
 
-    let size = energy * 1.7;
-    
+    size = energy * 1.3;
+    if (size < 1){
+      size = 0.5
+    }
+    // console.log(size);
 
+    geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
 
-    geometry = new THREE.CircleGeometry( size, 60 );
     material = new THREE.MeshBasicMaterial();
 
 

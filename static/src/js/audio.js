@@ -4,7 +4,11 @@ import * as Meyda from "meyda";
 import FrequencyMap from "note-frequency-map";
 
 let audioContext, analyser, microphone, javascriptNode
-let dataArray, bufferLength, energy, src
+let dataArray, bufferLength, perceptualSpread, 
+    spectralFlux, perceptualSharpness, spectralFlatness, spectralKurtosis, src
+
+
+let energy, roughness
 
 // source = audioContext.createMediaStreamSource(stream);
 // scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
@@ -44,33 +48,31 @@ if (navigator.getUserMedia) {
       javascriptNode.onaudioprocess = function() {
           var array = new Uint8Array(analyser.frequencyBinCount);
           analyser.getByteFrequencyData(array);
-          var values = 0;
+          // var values = 0;
           bufferLength = analyser.frequencyBinCount;
           dataArray = new Uint8Array(bufferLength);
 
 
-          var length = array.length;
-          for (var i = 0; i < length; i++) {
-            values += (array[i]);
-          }
-
-          var average = values / length;
-          // energy = average * 0.09
-
-        const meyda_analyser = Meyda.createMeydaAnalyzer({
-
-            audioContext: audioContext,
-            source: microphone,
-            buffersize: 256,
-            featureExtractors: ["energy"],
-            callback: (features) => {
-                energy = features['energy']
-                // console.log('energy', energy)
-            }
-        })
-        meyda_analyser.start();
 
         } // end fn stream
+        const meyda_analyser = Meyda.createMeydaAnalyzer({
+
+          audioContext: audioContext,
+          source: microphone,
+          buffersize: 256,
+          featureExtractors: ["energy", "perceptualSpread", "perceptualSharpness", 
+                              "spectralFlatness", "spectralKurtosis"],
+          callback: (features) => {
+              energy = features['energy']
+              roughness = features['spectralFlatness']
+              // perceptualSpread = features['perceptualSpread']
+              // perceptualSharpness = features['perceptualSharpness']
+              // spectralFlatness = features['spectralFlatness']
+              spectralKurtosis = features['spectralKurtosis']
+              console.log(spectralKurtosis)
+          }
+      })
+      meyda_analyser.start();
     },
     function(err) {
       console.log("The following error occured: " + err.name)
@@ -103,4 +105,4 @@ function pitchDetector(){
 
 
 
-export { audioContext, src, analyser, energy, bufferLength, dataArray, pitchDetector }
+export { audioContext, src, analyser, energy, roughness, bufferLength, dataArray, pitchDetector }
