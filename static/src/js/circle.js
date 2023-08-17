@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import { Noise }from 'noisejs';
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { energy, roughness, dataArray, analyser, pitchDetector } from './audio.js'
+import { Noise } from 'noisejs';
 
 let controls;
 let camera, scene, renderer;
@@ -145,15 +146,30 @@ function createCircle(){
 }
 
 
-function update(){
-  var positionAttribute = compoCenter.geometry.getAttribute('position')
+function update() {
+  var positionAttribute = compoCenter.geometry.getAttribute('position');
   var vertex = new THREE.Vector3();
+  var time = performance.now() * 0.003;
 
-  var k = 3;
-  // var vertices = compoCenter.geometry.attributes.position.array
-  for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++ ) {
-    vertex.fromBufferAttribute(positionAttribute, vertexIndex)
-    vertex.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(vertex.x * k + (roughness*100), vertex.y * k, vertex.z * k));
+  var scalingFactor = 1 + roughness * 3;
+
+  for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
+    vertex.fromBufferAttribute(positionAttribute, vertexIndex);
+    
+    // Check if the size is greater than 0.5 before applying Perlin noise
+    if (size > 0.5) {
+      var noiseValue = noise.perlin3(vertex.x * scalingFactor + time, vertex.y * scalingFactor, vertex.z * scalingFactor);
+      vertex.normalize().multiplyScalar(1 + 0.3 * noiseValue);
+
+      if (!isNaN(noiseValue) && isFinite(vertex.x) && isFinite(vertex.y) && isFinite(vertex.z)) {
+        positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
+      } else {
+        positionAttribute.setXYZ(vertexIndex, 0, 0, 0);
+      }
+    } else {
+      // If size is less than or equal to 0.5, keep the original position
+      positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
+    }
   }
 
   compoCenter.geometry.computeVertexNormals();
@@ -163,25 +179,25 @@ function update(){
 
 
 
+
 function animate() {
-  update();
   requestAnimationFrame(animate);
 
-  // 여기를 기점으로 색깔 등 요소 변경을 추가하면됨
-  FrameRate = FrameRate + 1
-  if (FrameRate % 4 == 0){
-  
+  FrameRate = FrameRate + 1;
+  if (FrameRate % 4 == 0) {
     // music rendering
-    if (dataArray){
+    if (dataArray) {
       analyser.getByteFrequencyData(dataArray);
       pitchDetector();
       // geometry rendering (firstly, delete the basic geometry in the base.)
       deleteBasics();
       createCircle();
-      render();
-      }
     }
   }
+
+  update(); // Call the update function after creating the mesh
+  render();
+}
 
 
 
@@ -205,4 +221,4 @@ function deleteBasics(){
 };
 
 
-requestAnimationFrame(animate);
+// requestAnimationFrame(animate);
