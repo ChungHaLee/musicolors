@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Noise }from 'noisejs';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { energy, roughness, dataArray, analyser, pitchDetector } from './audio.js'
 
@@ -13,7 +14,7 @@ let ambientLight, spotLight;
 
 let size;
 
-
+var noise = new Noise(Math.random());
 
 // BASIC EVENTS
 init();
@@ -81,19 +82,59 @@ function createCircle_Vanilla(){
 
 function createCircle(){
 
-    size = energy * 1.3;
-    if (size < 1){
+    size = energy * 1.1;
+    if (size < 0.5){
       size = 0.5
     }
     // console.log(size);
 
-    geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
+    // geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
+    geometry = new THREE.SphereGeometry(size*2, 128, 128);
 
-    material = new THREE.MeshBasicMaterial();
+    material = new THREE.ShaderMaterial({
+      uniforms: {
+        color1: {
+          value: new THREE.Color("#fec5bb")
+        },
+        color2: {
+          value: new THREE.Color("#d8e2dc")
+        },
+      },
+      vertexShader: `
+      
+        varying vec2 vUv;
+    
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+        }
+      `,
+      fragmentShader: `
+        #define PI 3.1415926
+        #define TWO_PI PI*2.
+          
+        uniform vec3 color1;
+        uniform vec3 color2;
+      
+        varying vec2 vUv;
+        
+        void main() {
+          
+          vec2 uv = vUv * 2. - 1.;
+          
+          float a = atan(uv.x,uv.y)+PI;
+          float r = TWO_PI/4.;
+          float d = cos(floor(.5+a/r)*r-a)*length(uv);
+          
+          gl_FragColor = vec4(mix(color1, color2, d), 1.0);
+        }
+      `,
+    });
 
 
     compoCenter = new THREE.Mesh(geometry, material);
     compoCenter.position.set(1, 0, 0);
+
   
     spotLight.lookAt(compoCenter);
     pointLight = new THREE.PointLight(0xffffff, 1);
@@ -104,14 +145,32 @@ function createCircle(){
 }
 
 
+function update(){
+  var positionAttribute = compoCenter.geometry.getAttribute('position')
+  var vertex = new THREE.Vector3();
+
+  var k = 3;
+  // var vertices = compoCenter.geometry.attributes.position.array
+  for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++ ) {
+    vertex.fromBufferAttribute(positionAttribute, vertexIndex)
+    vertex.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(vertex.x * k + (roughness*100), vertex.y * k, vertex.z * k));
+  }
+
+  compoCenter.geometry.computeVertexNormals();
+  compoCenter.geometry.normalsNeedUpdate = true;
+  compoCenter.geometry.verticesNeedUpdate = true;
+}
+
 
 
 function animate() {
+  update();
   requestAnimationFrame(animate);
+
   // 여기를 기점으로 색깔 등 요소 변경을 추가하면됨
   FrameRate = FrameRate + 1
   if (FrameRate % 4 == 0){
-
+  
     // music rendering
     if (dataArray){
       analyser.getByteFrequencyData(dataArray);
@@ -144,3 +203,6 @@ function deleteBasics(){
     compoCenter.geometry.dispose();
     compoCenter.material.dispose();
 };
+
+
+requestAnimationFrame(animate);

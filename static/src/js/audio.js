@@ -69,7 +69,7 @@ if (navigator.getUserMedia) {
               // perceptualSharpness = features['perceptualSharpness']
               // spectralFlatness = features['spectralFlatness']
               spectralKurtosis = features['spectralKurtosis']
-              console.log(spectralKurtosis)
+              // console.log(spectralKurtosis)
           }
       })
       meyda_analyser.start();
@@ -88,7 +88,7 @@ function updatePitch(analyser, detector, input, sampleRate) {
     analyser.getFloatTimeDomainData(input);
     let [pitch, clarity] = detector.findPitch(input, sampleRate);
     let myNote = FrequencyMap.noteFromFreq(pitch);
-    console.log('노트', myNote.note);
+    // console.log('노트', myNote.note);
 }
 
 
