@@ -41,8 +41,8 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(1200, 900);
     
-    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 2000);
-    camera.position.set(1, 10, 30);
+    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 1000);
+    camera.position.set(1, 10, 15);
   
     container = document.getElementById( "canvas" );
     
@@ -74,7 +74,8 @@ function init() {
 
 
 function createCircle_Vanilla(){
-    geometry = new THREE.CircleGeometry( 5, 30 );
+    // geometry = new THREE.CircleGeometry( 5, 30 );
+    geometry = new THREE.SphereGeometry(20, 128, 128);
     material = new THREE.MeshBasicMaterial();
 
 
@@ -139,26 +140,34 @@ function HSLToHex(h,s,l) {
 
 function createCircle(){
 
-    size = energy;
-    console.log('소리 크기', size)
-    // if (size < 0.4){
-    //   size = 0.4
-    // } else {
-    //   size * 1.2
-    // }
+    size = energy
+    if(size < 0.01){
+      size * 100
+    } else {
+
+    }
+
+    console.log(size)
 
     hue = warmth
     saturation = richness * 100
     luminance = sharpness * 100
-    // console.log(saturation)
+
+    if (hue > 360){
+      hue = 360
+    } else if (saturation > 100){
+      saturation = 100
+    } else if (luminance > 100){
+      luminance = 100
+    }
+    // console.log(hue, saturation, luminance)
 
 
     hex1 = HSLToHex(hue, saturation, luminance);
-    hex2 = HSLToHex(0, 100, 90)
+    hex2 = HSLToHex(0, 100, 96)
     
-    // console.log('size', size*2)
-    // geometry = new THREE.IcosahedronGeometry(size, Math.ceil(roughness*10));
-    geometry = new THREE.SphereGeometry(size * 3, 128, 128);
+    geometry = new THREE.SphereGeometry(size, 128, 128);
+    console.log(size)
 
     material = new THREE.ShaderMaterial({
       uniforms: {

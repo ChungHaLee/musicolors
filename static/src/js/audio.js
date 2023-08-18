@@ -62,6 +62,7 @@ if (navigator.getUserMedia) {
           buffersize: 720,
           featureExtractors: ["energy", "perceptualSpread", "perceptualSharpness", 
                               "spectralFlatness", "spectralKurtosis", "spectralCentroid"],
+                              
           callback: (features) => { // mapping rules
               energy = features['energy'] // size
               roughness = features['spectralFlatness']  // perlin noise
