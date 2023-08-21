@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { energy, roughness, warmth, richness, sharpness, 
-         dataArray, analyser, pitchDetector } from './audio.js'
+         dataArray, analyser, pitchDetector, realpitch } from './audio.js'
 
 import { Noise } from 'noisejs';
 
@@ -41,7 +41,7 @@ function init() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(1200, 900);
     
-    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 1000);
+    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 3000);
     camera.position.set(1, 10, 15);
   
     container = document.getElementById( "canvas" );
@@ -75,7 +75,7 @@ function init() {
 
 function createCircle_Vanilla(){
     // geometry = new THREE.CircleGeometry( 5, 30 );
-    geometry = new THREE.SphereGeometry(20, 128, 128);
+    geometry = new THREE.SphereGeometry(0, 128, 128);
     material = new THREE.MeshBasicMaterial();
 
 
@@ -136,23 +136,61 @@ function HSLToHex(h,s,l) {
 
 
 
+// function normalize(value, min_value, max_value) {
+//   return (value - min_value) / (max_value - min_value);
+// }
+
+// function naturalizeSize(size) {
+//   const normalizedSize = normalize(size, 0.1, 8);
+//   let adjustedSize;
+
+//   if (normalizedSize < 0.1) {
+//       adjustedSize = normalizedSize * 10;
+//   } else if (normalizedSize > 1) {
+//       adjustedSize = 1;
+//   } else {
+//       adjustedSize = normalizedSize;
+//   }
+
+//   return adjustedSize;
+// }
+
+
+
 
 
 function createCircle(){
 
     size = energy
-    if(size < 0.01){
-      size * 100
-    } else {
 
+
+    let red = '#ff0059'
+    let orange = '#ff8c00'
+    let yellow = '#ffb600'
+    let green = '#b4e600'
+    let skyblue = '#0fffdb'
+    let blue = '#0ad2ff'
+    let violet = '#9500ff'
+
+    if (realpitch == 'C'){
+      hex2 = red
+    } else if (realpitch == 'D'){
+      hex2 = orange
+    } else if (realpitch == 'E'){
+      hex2 = yellow
+    } else if (realpitch == 'F'){
+      hex2 = green
+    } else if (realpitch == 'G'){
+      hex2 = skyblue
+    } else if (realpitch == 'A'){
+      hex2 = blue
+    } else if (realpitch == 'B'){
+      hex2 = violet
     }
-
-    console.log(size)
 
     hue = warmth
     saturation = richness * 100
     luminance = sharpness * 100
-
     if (hue > 360){
       hue = 360
     } else if (saturation > 100){
@@ -160,14 +198,13 @@ function createCircle(){
     } else if (luminance > 100){
       luminance = 100
     }
-    // console.log(hue, saturation, luminance)
 
 
     hex1 = HSLToHex(hue, saturation, luminance);
-    hex2 = HSLToHex(0, 100, 96)
+    // hex2 = HSLToHex(0, 100, 96)
     
-    geometry = new THREE.SphereGeometry(size, 128, 128);
-    console.log(size)
+    geometry = new THREE.SphereGeometry(size*2, 128, 128);
+    
 
     material = new THREE.ShaderMaterial({
       uniforms: {
