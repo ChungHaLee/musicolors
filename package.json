@@ -1,6 +1,6 @@
 {
   "name": "musicolors",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "for practice",
   "main": "colors.js",
   "scripts": {
