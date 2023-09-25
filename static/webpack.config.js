@@ -5,7 +5,7 @@ module.exports = {
     // source file location
     entry: {
         audio: path.resolve(__dirname, "src", "js", "audio.js"),
-        circle: path.resolve(__dirname, "src", "js", "circle.js")
+        colors: path.resolve(__dirname, "src", "js", "colors.js")
     },
     mode: "development",
     target: "web",
