@@ -23,13 +23,13 @@ $ npm i musicolors
 #### Initial Stage
 you need this step when you want to visualize the object for the first time.
 
-```
+```javascript
 musicolors.init();
 musicolors.createVanilla();
 ```
 
 #### Music Visualization
-```
+```javascript
 // pitch visualization
 musicolors.animatePitch();
 
