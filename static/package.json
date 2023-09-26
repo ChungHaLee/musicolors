@@ -1,7 +1,7 @@
 {
   "name": "musicolors",
-  "version": "1.0.0",
-  "description": "for practice",
+  "version": "1.0.5",
+  "description": "A Javascript Library for Music Visualization Using Pitch, Energy, and Timbre. 🪄",
   "main": "colors.js",
   "scripts": {
     "dev": "webpack --mode development",
