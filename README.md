@@ -28,14 +28,14 @@ $ musicolors.init();
 $ musicolors.createVanilla();
 ```
 
-#### Musiic Visualization
+#### Music Visualization
 ```
-# pitch visualization
+// pitch visualization
 $ musicolors.animatePitch();
 
-# energy visualization
+// energy visualization
 $ musicolors.animateEnergy();
 
-# timbre visualization
+// timbre visualization
 $ musicolors.animateTimbre();
 ```
