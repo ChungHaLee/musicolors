@@ -20,31 +20,22 @@ $ npm i musicolors
 
 ## Usage
 
-#### 0. Initial Stage
+#### Initial Stage
 you need this step when you want to visualize the object for the first time.
 
 ```
 $ musicolors.init();
 $ musicolors.createVanilla();
-
 ```
 
-#### 1. Pitch Visualization
+#### Musiic Visualization
 ```
+# pitch visualization
 $ musicolors.animatePitch();
 
-```
-
-
-#### 2. Energy Visualization
-```
+# energy visualization
 $ musicolors.animateEnergy();
 
-```
-
-
-#### 3. Timbre Visualization
-```
+# timbre visualization
 $ musicolors.animateTimbre();
-
 ```
