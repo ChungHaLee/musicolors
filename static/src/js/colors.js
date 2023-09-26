@@ -2,10 +2,9 @@ import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { energy, roughness, warmth, richness, sharpness, 
-         dataArray, analyser, pitchDetector, realpitch } from './audio.js'
+         dataArray, analyser, pitchDetector, realpitch, realoctave } from './audio.js'
 
 import { Noise } from 'noisejs';
-
 
 
 let controls;
@@ -18,24 +17,18 @@ let pointLight;
 let ambientLight, spotLight;
 
 let size;
-
-let hue, saturation, luminance;
 let hex1, hex2;
-
+let hue, saturation, luminance;
 
 var noise = new Noise(Math.random());
 
 
-// BASIC EVENTS
-init();
-animate();
 
 
 
-// init function
 function init() {
     scene = new THREE.Scene();
-    // canvas
+
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -66,13 +59,12 @@ function init() {
   
     controls = new OrbitControls( camera, container );
   
-    createCircle_Vanilla();
+    createVanilla();
 
   };
 
 
-
-function createCircle_Vanilla(){
+function createVanilla(){
     geometry = new THREE.SphereGeometry(0, 128, 128);
 
     material = new THREE.MeshBasicMaterial();
@@ -91,9 +83,9 @@ function createCircle_Vanilla(){
 
 
 
-// HSL color 를 Hex Code 로 변환해주는 함수
+
 function HSLToHex(h,s,l) {
-  
+
   s /= 100;
   l /= 100;
 
@@ -131,132 +123,264 @@ function HSLToHex(h,s,l) {
   if (b.length == 1)
     b = "0" + b;
   return '#' + r + g + b;
+
+}
+
+
+function getColorByPitch(pitch) {
+  // Define the rainbow colors for the notes Do to Si
+  const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
+
+  // Define the octave range and corresponding lightness values
+  const minLightness = 0; // Minimum lightness
+  const maxLightness = 50; // Maximum lightness
+
+  // Map the pitch to the rainbow colors
+  const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+  const pitchIndex = noteNames.indexOf(pitch);
+
+  size = energy;
+  if (size < 0.01) {
+    size * 100;
+  } else {
+    // Check if the pitch is in the rainbow colors range (Do to Si)
+    if (pitchIndex >= 0 && pitchIndex < rainbowColors.length) {
+      const color = rainbowColors[pitchIndex];
+
+      // Map the pitch octave to the lightness range (3 to 5 octaves)
+      const octave = 3 + realoctave; // Adjusted the minimum octave
+      const lightness = minLightness + (maxLightness - minLightness) * (octave / 5); // Assuming 5 octaves
+
+      // Create a new THREE.Color instance and set it using HSL
+      const hsvColor = new THREE.Color();
+      hsvColor.setHSL(pitchIndex * 360 / rainbowColors.length, 1, lightness / 100);
+
+      // Convert the THREE.Color to hexadecimal
+      const finalColor = hsvColor.getHexString();
+
+      return '#' + finalColor;
+    } else {
+      return '#CCCCCC'; // Default color for non-rainbow notes
+    }
+  }
 }
 
 
 
-// function normalize(value, min_value, max_value) {
-//   return (value - min_value) / (max_value - min_value);
-// }
 
-// function naturalizeSize(size) {
-//   const normalizedSize = normalize(size, 0.1, 8);
-//   let adjustedSize;
+function applyPitch() {
+  hue = warmth;
+  saturation = richness * 100;
+  luminance = sharpness * 100;
 
-//   if (normalizedSize < 0.1) {
-//       adjustedSize = normalizedSize * 10;
-//   } else if (normalizedSize > 1) {
-//       adjustedSize = 1;
-//   } else {
-//       adjustedSize = normalizedSize;
-//   }
+  // Check and clamp the values
+  if (hue > 360) {
+    hue = 360;
+  }
+  if (saturation > 100) {
+    saturation = 100;
+  }
+  if (luminance > 100) {
+    luminance = 100;
+  }
 
-//   return adjustedSize;
-// }
+  hex1 = HSLToHex(hue, saturation, luminance);
+  hex2 = getColorByPitch(realpitch);
 
-
-
-
-
-function createCircle(){
-
-    size = energy
-
-
-    let red = '#ff0059'
-    let orange = '#ff8c00'
-    let yellow = '#ffb600'
-    let green = '#b4e600'
-    let skyblue = '#0fffdb'
-    let blue = '#0ad2ff'
-    let violet = '#9500ff'
-
-    if (realpitch == 'C'){
-      hex2 = red
-    } else if (realpitch == 'D'){
-      hex2 = orange
-    } else if (realpitch == 'E'){
-      hex2 = yellow
-    } else if (realpitch == 'F'){
-      hex2 = green
-    } else if (realpitch == 'G'){
-      hex2 = skyblue
-    } else if (realpitch == 'A'){
-      hex2 = blue
-    } else if (realpitch == 'B'){
-      hex2 = violet
-    }
-
-    hue = warmth
-    saturation = richness * 100
-    luminance = sharpness * 100
-    if (hue > 360){
-      hue = 360
-    } else if (saturation > 100){
-      saturation = 100
-    } else if (luminance > 100){
-      luminance = 100
-    }
-
-
-    hex1 = HSLToHex(hue, saturation, luminance);
-    // hex2 = HSLToHex(0, 100, 96)
-    
-    geometry = new THREE.SphereGeometry(size*2, 128, 128);
-    // geometry = new THREE.IcosahedronGeometry(size*2, Math.ceil(size*10))
-    
-
-    material = new THREE.ShaderMaterial({
-      uniforms: {
-        color1: {
-          value: new THREE.Color(hex1)
-        },
-        color2: {
-          value: new THREE.Color(hex2)
-        }
+  geometry = new THREE.SphereGeometry(1.4, 128, 128);
+  material = new THREE.ShaderMaterial({
+    uniforms: {
+      color1: {
+        value: new THREE.Color(hex1)
       },
-      vertexShader: `
-      
-        varying vec2 vUv;
+      color2: {
+        value: new THREE.Color(hex2)
+      }
+    },
+    vertexShader: `
     
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-        }
-      `,
-      fragmentShader: `
-        #define PI 3.1415926
-        #define TWO_PI PI*2.
-          
-        uniform vec3 color1;
-        uniform vec3 color2;
-      
-        varying vec2 vUv;
+      varying vec2 vUv;
+  
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `,
+    fragmentShader: `
+      #define PI 3.1415926
+      #define TWO_PI PI*2.
         
-        void main() {
-          
-          vec2 uv = vUv * 2. - 1.;
-          
-          float a = atan(uv.x,uv.y)+PI;
-          float r = TWO_PI/4.;
-          float d = cos(floor(.5+a/r)*r-a)*length(uv);
-          
-          gl_FragColor = vec4(mix(color1, color2, d), 1.0);
-        }
-      `,
-    });
+      uniform vec3 color1;
+      uniform vec3 color2;
+    
+      varying vec2 vUv;
+      
+      void main() {
+        
+        vec2 uv = vUv * 2. - 1.;
+        
+        float a = atan(uv.x,uv.y)+PI;
+        float r = TWO_PI/4.;
+        float d = cos(floor(.5+a/r)*r-a)*length(uv);
+        
+        gl_FragColor = vec4(mix(color1, color2, d), 1.0);
+      }
+    `,
+  });
+
+  compoCenter = new THREE.Mesh(geometry, material);
+  compoCenter.position.set(1, 0, 0);
+
+  spotLight.lookAt(compoCenter);
+  pointLight = new THREE.PointLight(0xffffff, 1);
+  pointLight.position.set(200, 200, 200);
+  scene.add(pointLight);
+
+  group.add(compoCenter);
+}
 
 
-    compoCenter = new THREE.Mesh(geometry, material);
-    compoCenter.position.set(1, 0, 0);
+
+
+
+function applyEnergy(){
+
+  size = energy
+  if(size < 0.01){
+    size * 100
+  } else {
+
+  }
 
   
-    spotLight.lookAt(compoCenter);
-    pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(200, 200, 200);
-    scene.add(pointLight);
+
+  geometry = new THREE.SphereGeometry(size*1.6, 128, 128);
+  material = new THREE.ShaderMaterial({
+    uniforms: {
+      color1: {
+        value: new THREE.Color('#555555')
+      },
+      color2: {
+        value: new THREE.Color('#d5d5d5')
+      }
+    },
+    vertexShader: `
+    
+      varying vec2 vUv;
   
-    group.add( compoCenter );
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `,
+    fragmentShader: `
+      #define PI 3.1415926
+      #define TWO_PI PI*2.
+        
+      uniform vec3 color1;
+      uniform vec3 color2;
+    
+      varying vec2 vUv;
+      
+      void main() {
+        
+        vec2 uv = vUv * 2. - 1.;
+        
+        float a = atan(uv.x,uv.y)+PI;
+        float r = TWO_PI/4.;
+        float d = cos(floor(.5+a/r)*r-a)*length(uv);
+        
+        gl_FragColor = vec4(mix(color1, color2, d), 1.0);
+      }
+    `,
+  });
+  compoCenter = new THREE.Mesh(geometry, material);
+  compoCenter.position.set(1, 0, 0);
+
+
+  spotLight.lookAt(compoCenter);
+  pointLight = new THREE.PointLight(0xffffff, 1);
+  pointLight.position.set(200, 200, 200);
+  scene.add(pointLight);
+
+  group.add( compoCenter );
+
+}
+
+
+
+
+function applyTimbre() {
+  hue = warmth;
+  saturation = richness * 100;
+  luminance = sharpness * 100;
+
+  // Check and clamp the values
+  if (hue > 360) {
+    hue = 360;
+  }
+  if (saturation > 100) {
+    saturation = 100;
+  }
+  if (luminance > 100) {
+    luminance = 100;
+  }
+
+  hex1 = HSLToHex(hue, saturation, luminance);
+  hex2 = '#FFFFFF'
+
+  geometry = new THREE.SphereGeometry(1.4, 128, 128);
+  material = new THREE.ShaderMaterial({
+    uniforms: {
+      color1: {
+        value: new THREE.Color(hex1)
+      },
+      color2: {
+        value: new THREE.Color(hex2)
+      }
+    },
+    vertexShader: `
+    
+      varying vec2 vUv;
+  
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+      }
+    `,
+    fragmentShader: `
+      #define PI 3.1415926
+      #define TWO_PI PI*2.
+        
+      uniform vec3 color1;
+      uniform vec3 color2;
+    
+      varying vec2 vUv;
+      
+      void main() {
+        
+        vec2 uv = vUv * 2. - 1.;
+        
+        float a = atan(uv.x,uv.y)+PI;
+        float r = TWO_PI/4.;
+        float d = cos(floor(.5+a/r)*r-a)*length(uv);
+        
+        gl_FragColor = vec4(mix(color1, color2, d), 1.0);
+      }
+    `,
+  });
+  compoCenter = new THREE.Mesh(geometry, material);
+  compoCenter.position.set(1, 0, 0);
+
+
+  spotLight.lookAt(compoCenter);
+  pointLight = new THREE.PointLight(0xffffff, 1);
+  pointLight.position.set(200, 200, 200);
+  scene.add(pointLight);
+
+  group.add( compoCenter );
+
+
 }
 
 
@@ -265,27 +389,34 @@ function update() {
   var vertex = new THREE.Vector3();
   var time = performance.now() * 0.003;
 
-  var scalingFactor = 1 + roughness * 3;
+  // Define thresholds for when the roughness and energy effects should be applied
+  var roughnessThreshold = 0.1; // Adjust this threshold as needed
+  var energyThreshold = 0.01; // Adjust this threshold as needed
 
   for (let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex++) {
     vertex.fromBufferAttribute(positionAttribute, vertexIndex);
-    
-    // Check if the size is greater than 1 before applying Perlin noise
-    if (size > 1) {
-      var noiseValue = noise.perlin3(vertex.x * scalingFactor, vertex.y * scalingFactor, vertex.z * scalingFactor);
-      vertex.normalize().multiplyScalar(1 + 0.3 * noiseValue);
 
-      if (!isNaN(noiseValue) && isFinite(vertex.x) && isFinite(vertex.y) && isFinite(vertex.z)) {
-        positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
-      } else {
-        positionAttribute.setXYZ(vertexIndex, 0, 0, 0);
-      }
+    // Calculate a scaling factor based on energy
+    var energyScalingFactor = Math.max(0.01, energy / energyThreshold); // Adjust the minimum scaling factor as needed
 
-    } else {
-      // console.log('소리 작음')
-      // If size is less than or equal to 1, keep the original position
+    // Check if the roughness is above the threshold and energy is above the threshold before applying displacement
+    if (roughness > roughnessThreshold) {
+      // Calculate a displacement based on the roughness value and scaled by energy
+      var scalingFactor = 5 + roughness * 10; // Adjust these values as needed
+
+      var displacement = new THREE.Vector3(
+        roughness * scalingFactor * energyScalingFactor * (Math.random() - 0.5),
+        roughness * scalingFactor * energyScalingFactor * (Math.random() - 0.5),
+        roughness * scalingFactor * energyScalingFactor * (Math.random() - 0.5)
+      );
+
+      vertex.add(displacement);
+    }
+
+    if (!isNaN(vertex.x) && isFinite(vertex.x) && !isNaN(vertex.y) && isFinite(vertex.y) && !isNaN(vertex.z) && isFinite(vertex.z)) {
       positionAttribute.setXYZ(vertexIndex, vertex.x, vertex.y, vertex.z);
-
+    } else {
+      positionAttribute.setXYZ(vertexIndex, 0, 0, 0);
     }
   }
 
@@ -297,8 +428,9 @@ function update() {
 
 
 
-function animate() {
-  requestAnimationFrame(animate);
+
+function animatePitch() {
+  requestAnimationFrame(animatePitch);
 
   FrameRate = FrameRate + 1;
   if (FrameRate % 4 == 0) {
@@ -309,24 +441,63 @@ function animate() {
       pitchDetector();
       // geometry rendering (firstly, delete the basic geometry in the base.)
       deleteBasics();
-      createCircle();
+      applyPitch();
 
     }
   }
 
-  update(); // Call the update function after creating the mesh
   render();
 }
 
 
 
+function animateEnergy() {
+  requestAnimationFrame(animateEnergy);
 
-// render function
+  FrameRate = FrameRate + 1;
+  if (FrameRate % 4 == 0) {
+    // music rendering
+    if (dataArray) {
+
+      analyser.getByteFrequencyData(dataArray);
+      deleteBasics();
+      applyEnergy();
+
+    }
+  }
+
+  render();
+}
+
+
+
+function animateTimbre() {
+  requestAnimationFrame(animateTimbre);
+
+  FrameRate = FrameRate + 1;
+  if (FrameRate % 4 == 0) {
+    // music rendering
+    if (dataArray) {
+
+      analyser.getByteFrequencyData(dataArray);
+      deleteBasics();
+      applyTimbre();
+
+    }
+  }
+
+  update();
+
+
+  render();
+}
+
+
+
 function render() {
     controls.update();
     renderer.render(scene, camera);
   }
-
 
 
 
@@ -338,3 +509,9 @@ function deleteBasics(){
     compoCenter.geometry.dispose();
     compoCenter.material.dispose();
 };
+
+
+
+
+
+export { init, render, deleteBasics, createVanilla, applyPitch, applyEnergy, applyTimbre, animatePitch, animateEnergy, animateTimbre, update }

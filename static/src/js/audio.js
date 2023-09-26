@@ -9,22 +9,15 @@ let dataArray, bufferLength, perceptualSpread,
 
 
 let energy, roughness, warmth, richness, sharpness
-let realpitch;
+let realpitch, realoctave
 
-// source = audioContext.createMediaStreamSource(stream);
-// scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
-
-// scriptProcessor.onaudioprocess = (event) => {
-// const buffer = event.inputBuffer.getChannelData(0);
-// // ~_~
-// // };
-
-//   source.connect(scriptProcessor);
-//   scriptProcessor.connect(audioContext.destination);
 
 navigator.getUserMedia = navigator.getUserMedia ||
   navigator.webkitGetUserMedia ||
   navigator.mozGetUserMedia;
+
+
+
 if (navigator.getUserMedia) {
   navigator.getUserMedia({
       audio: true
@@ -43,13 +36,10 @@ if (navigator.getUserMedia) {
       analyser.connect(javascriptNode);
       javascriptNode.connect(audioContext.destination);
 
-
-    //   canvasContext = $("#canvas")[0].getContext("2d");
-
       javascriptNode.onaudioprocess = function() {
           var array = new Uint8Array(analyser.frequencyBinCount);
           analyser.getByteFrequencyData(array);
-          // var values = 0;
+
           bufferLength = analyser.frequencyBinCount;
           dataArray = new Uint8Array(bufferLength);
 
@@ -70,7 +60,6 @@ if (navigator.getUserMedia) {
               warmth = features['spectralCentroid']     // hue
               richness = features['perceptualSpread']   // saturation
               sharpness = features['perceptualSharpness'] // luminance
-
             
           }
       })
@@ -90,12 +79,9 @@ function updatePitch(analyser, detector, input, sampleRate) {
     analyser.getFloatTimeDomainData(input);
     let [pitch, clarity] = detector.findPitch(input, sampleRate);
     let myNote = FrequencyMap.noteFromFreq(pitch);
-
     realpitch = myNote.name
-    // console.log(realpitch)
-
+    realoctave = myNote.octave
 }
-
 
 
 function pitchDetector(){
@@ -108,6 +94,4 @@ function pitchDetector(){
 
 
 
-
-
-export { realpitch, audioContext, src, analyser, energy, roughness, warmth, richness, sharpness, bufferLength, dataArray, pitchDetector }
+export { realpitch, realoctave, audioContext, src, analyser, energy, roughness, warmth, richness, sharpness, bufferLength, dataArray, pitchDetector }
