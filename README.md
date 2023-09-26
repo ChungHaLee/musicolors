@@ -24,18 +24,18 @@ $ npm i musicolors
 you need this step when you want to visualize the object for the first time.
 
 ```
-$ musicolors.init();
-$ musicolors.createVanilla();
+musicolors.init();
+musicolors.createVanilla();
 ```
 
 #### Music Visualization
 ```
 // pitch visualization
-$ musicolors.animatePitch();
+musicolors.animatePitch();
 
 // energy visualization
-$ musicolors.animateEnergy();
+musicolors.animateEnergy();
 
 // timbre visualization
-$ musicolors.animateTimbre();
+musicolors.animateTimbre();
 ```
