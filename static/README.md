@@ -15,6 +15,12 @@ $ npm i musicolors
 
 ## Usage
 
+
+#### Import the Module
+```javascript
+import musicolors from musicolors
+```
+
 #### Initial Step
 you need this step when you want to visualize the object for the first time.
 

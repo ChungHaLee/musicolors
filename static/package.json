@@ -1,6 +1,6 @@
 {
   "name": "musicolors",
-  "version": "1.0.12",
+  "version": "0.0.2",
   "description": "A Javascript Library for Music Visualization Using Pitch, Energy, and Timbre. 🪄",
   "main": "colors.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "watch": "webpack --watch",
     "start": "npm run build && http-server"
   },
-  "keywords": [],
+  "keywords": ["music-visualization", "audio-features", "music-information-retrieval", "mir", "visualization"],
   "author": "ChungHaLee",
   "license": "MIT",
   "dependencies": {
