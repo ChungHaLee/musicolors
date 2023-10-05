@@ -31,6 +31,10 @@ musicolors.createVanilla();
 
 #### Music Visualization
 you can visualize by three features of music: pitch, energy and timbre.
+| pitch | energy | timbre | 
+:-------------------------:|:-------------------------:|:-------------------------:|
+| <img width="200" height="200" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/f9594593-19f9-4d9b-928e-1da2b857c651"> |  <img width="200" height="200" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/2cd0a4f6-f29f-42cc-b5d8-59810937d67b"> | <img width="200" height="200" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/5e5b8db4-77aa-49e5-bcf5-0f4ca05577e5"> | 
+<br>
 ```javascript
 // pitch visualization
 musicolors.animatePitch();
