@@ -8,6 +8,7 @@ import { Noise } from 'noisejs';
 
 
 let controls;
+let background;
 let camera, scene, renderer;
 let container;
 let FrameRate = 0;
@@ -25,23 +26,26 @@ var noise = new Noise(Math.random());
 
 
 function init() {
+  
     scene = new THREE.Scene();
 
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(1200, 900);
+    renderer.setSize(window.innerWidth, 1100);
     
-    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 2, 3000);
+    camera = new THREE.PerspectiveCamera(30, renderer.domElement.width/renderer.domElement.height, 0.1, 1000);
     camera.position.set(1, 10, 15);
   
     container = document.getElementById( "canvas" );
     
     container.appendChild( renderer.domElement )
-    
+
+
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.25;
     renderer.outputEncoding = THREE.sRGBEncoding;
+  
   
     ambientLight = new THREE.AmbientLight(0xaaaaaa);
     scene.add(ambientLight);
@@ -62,19 +66,22 @@ function init() {
   };
 
 
+
+
+
 function createVanilla(){
     geometry = new THREE.SphereGeometry(0, 128, 128);
 
     material = new THREE.MeshBasicMaterial();
 
-
     compoCenter = new THREE.Mesh(geometry, material);
-    compoCenter.position.set(1, 0, 0);
+    compoCenter.position.set(0, 0, 0);
 
     spotLight.lookAt(compoCenter);
     pointLight = new THREE.PointLight(0xffffff, 1);
     pointLight.position.set(200, 200, 200);
     scene.add(pointLight);
+
 
     group.add( compoCenter );
 }
@@ -160,7 +167,7 @@ function getColorByPitch(pitch) {
 
   size = energy;
   if (size < 0.01) {
-    size * 20;
+    size * 40;
   } else {
     // Check if the pitch is in the rainbow colors range (Do to Si)
     if (pitchIndex >= 0 && pitchIndex < rainbowColors.length) {
@@ -251,7 +258,7 @@ function applyPitch() {
   });
 
   compoCenter = new THREE.Mesh(geometry, material);
-  compoCenter.position.set(1, 0, 0);
+  compoCenter.position.set(0, 0, 0);
   compoCenter.scale.set(0.5, 0.5, 0.5); // Adjust the scale factor as needed
 
 
@@ -271,7 +278,7 @@ function applyEnergy(){
 
   size = energy
   if(size < 0.01){
-    size * 50
+    size * 100
   } else {
 
   }
@@ -317,7 +324,7 @@ function applyEnergy(){
     `,
   });
   compoCenter = new THREE.Mesh(geometry, material);
-  compoCenter.position.set(1, 0, 0);
+  compoCenter.position.set(0, 0, 0);
   compoCenter.scale.set(0.5, 0.5, 0.5); // Adjust the scale factor as needed
 
 
@@ -336,12 +343,20 @@ function applyEnergy(){
 
 function applyTimbre() {
 
-  size = energy
-  if(size < 0.01){
-    size * 50
+  // Use an exponential scaling function based on "energy"
+  let scaleFactor;
+  if (energy < 0.001) {
+    // Exponential scaling for very small energy values
+    scaleFactor = 10 * Math.pow(energy, 2);
   } else {
-
+    // Linear scaling for larger energy values, smoothly transitioning from exponential
+    const linearComponent = 1000 * energy;
+    const exponentialComponent = 100 * Math.pow(energy, 0.5); // Use 0.5 as the exponent for a smoother transition
+    scaleFactor = Math.min(linearComponent + exponentialComponent, 2000); // Limit the maximum size change
   }
+
+  
+  size = scaleFactor
 
   hue = warmth;
   saturation = richness * 100;
@@ -403,8 +418,8 @@ function applyTimbre() {
   });
 
   compoCenter = new THREE.Mesh(geometry, material);
-  compoCenter.position.set(1, 0, 0);
-  compoCenter.scale.set(0.5, 0.5, 0.5); // Adjust the scale factor as needed
+  compoCenter.position.set(0, 0, 0);
+  compoCenter.scale.set(1, 1, 1); // Adjust the scale factor as needed
 
 
   spotLight.lookAt(compoCenter);
@@ -508,6 +523,7 @@ function animateEnergy() {
 
 
 function animateTimbre() {
+
   requestAnimationFrame(animateTimbre);
 
   FrameRate = FrameRate + 1;
@@ -522,6 +538,7 @@ function animateTimbre() {
   update();
   render();
 }
+
 
 
 
@@ -541,6 +558,31 @@ function deleteBasics(){
     compoCenter.material.dispose();
 };
 
+
+
+// Update the camera aspect ratio when the window is resized
+// window.addEventListener("resize", () => {
+//   const newWidth = container.clientWidth;
+//   const newHeight = container.clientHeight;
+
+//   camera.aspect = newWidth / newHeight;
+//   camera.updateProjectionMatrix();
+
+//   renderer.setSize(newWidth, newHeight);
+// });
+
+
+window.addEventListener('dblclick', () => {
+  if(!document.fullscreenElement) {
+      canvas.requestFullscreen()
+  } else {
+      document.exitFullscreen()
+  }
+})
+
+
+init();
+animateTimbre();
 
 
 

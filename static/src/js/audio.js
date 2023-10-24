@@ -80,6 +80,7 @@ function updatePitch(analyser, detector, input, sampleRate) {
     let [pitch, clarity] = detector.findPitch(input, sampleRate);
     let myNote = FrequencyMap.noteFromFreq(pitch);
     realpitch = myNote.name
+    console.log('realpitch', realpitch)
     realoctave = myNote.octave
 }
 
