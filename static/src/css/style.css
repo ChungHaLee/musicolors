@@ -27,8 +27,9 @@ canvas {
     margin-top: -3%;
 
     overflow: hidden;
-    animation: movingGradient 10s linear infinite;
-    background: linear-gradient(45deg, #e5ab9d, #ffffc2, #b0dcec, #b9edd3);
+    /* animation: movingGradient 10s linear infinite; */
+    transition: background-image 10s ease-in-out;
+    background: white;
     background-size: 400% 400%;
   }
   

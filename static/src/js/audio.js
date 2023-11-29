@@ -8,7 +8,7 @@ let dataArray, bufferLength, perceptualSpread,
     spectralFlux, perceptualSharpness, spectralFlatness, spectralKurtosis, src
 
 
-let energy, roughness, warmth, richness, sharpness
+let energy, roughness, warmth, richness, sharpness, kurtosis;
 let realpitch, realoctave
 
 
@@ -42,7 +42,7 @@ if (navigator.getUserMedia) {
 
           bufferLength = analyser.frequencyBinCount;
           dataArray = new Uint8Array(bufferLength);
-
+          // pitchDetector();
 
 
         } // end fn stream
@@ -50,7 +50,7 @@ if (navigator.getUserMedia) {
 
           audioContext: audioContext,
           source: microphone,
-          buffersize: 720,
+          buffersize: 512,
           featureExtractors: ["energy", "perceptualSpread", "perceptualSharpness", 
                               "spectralFlatness", "spectralKurtosis", "spectralCentroid"],
                               
@@ -60,7 +60,7 @@ if (navigator.getUserMedia) {
               warmth = features['spectralCentroid']     // hue
               richness = features['perceptualSpread']   // saturation
               sharpness = features['perceptualSharpness'] // luminance
-            
+              kurtosis = features['spectralKurtosis']
           }
       })
       meyda_analyser.start();
@@ -75,12 +75,12 @@ if (navigator.getUserMedia) {
 
 
 
+
 function updatePitch(analyser, detector, input, sampleRate) {
     analyser.getFloatTimeDomainData(input);
     let [pitch, clarity] = detector.findPitch(input, sampleRate);
     let myNote = FrequencyMap.noteFromFreq(pitch);
     realpitch = myNote.name
-    console.log('realpitch', realpitch)
     realoctave = myNote.octave
 }
 
@@ -95,4 +95,4 @@ function pitchDetector(){
 
 
 
-export { realpitch, realoctave, audioContext, src, analyser, energy, roughness, warmth, richness, sharpness, bufferLength, dataArray, pitchDetector }
+export { realpitch, realoctave, audioContext, src, analyser, energy, roughness, warmth, richness, sharpness, kurtosis, bufferLength, dataArray, pitchDetector }

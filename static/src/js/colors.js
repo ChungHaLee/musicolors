@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { energy, roughness, warmth, richness, sharpness, 
-         dataArray, analyser, pitchDetector, realpitch, realoctave } from './audio.js'
+import { energy, roughness, warmth, richness, sharpness, kurtosis,
+         dataArray, analyser, realpitch, realoctave } from './audio.js'
 
 import { Noise } from 'noisejs';
 
@@ -154,6 +154,7 @@ function getRandomHexColor() {
 
 
 function getColorByPitch(pitch) {
+
   // Define the rainbow colors for the notes Do to Si
   const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
 
@@ -163,12 +164,14 @@ function getColorByPitch(pitch) {
 
   // Map the pitch to the rainbow colors
   const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-  const pitchIndex = noteNames.indexOf(pitch);
+  
+  let pitchIndex = noteNames.indexOf(pitch);
 
   size = energy;
   if (size < 0.01) {
     size * 40;
-  } else {
+  } 
+    else {
     // Check if the pitch is in the rainbow colors range (Do to Si)
     if (pitchIndex >= 0 && pitchIndex < rainbowColors.length) {
       const color = rainbowColors[pitchIndex];
@@ -212,6 +215,7 @@ function applyPitch() {
   if (luminance > 100) {
     luminance = 100;
   }
+
 
   hex1 = HSLToHex(hue, saturation, luminance);
   hex2 = getColorByPitch(realpitch);
@@ -533,6 +537,8 @@ function animateTimbre() {
       analyser.getByteFrequencyData(dataArray);
       deleteBasics();
       applyTimbre();
+      let emotionScores = estimateEmotionValenceArousal(richness, sharpness, roughness, kurtosis, warmth);
+      changeBGColor(emotionScores.valence, emotionScores.arousal);
     }
   }
   update();
@@ -557,6 +563,75 @@ function deleteBasics(){
     compoCenter.geometry.dispose();
     compoCenter.material.dispose();
 };
+
+
+function changeBGColor(valence, arousal) {
+  const startColor = [255, 255, 255]; // White as a neutral start color
+
+  // Normalize valence and arousal to be in the range of 0 to 1
+  valence = (valence + 1) / 2; // Now 0 (sad) to 1 (happy)
+  arousal = (arousal + 1) / 2; // Now 0 (low arousal) to 1 (high arousal)
+  console.log(valence, arousal)
+  let endColor;
+
+  // Check for the 'no sound' state
+  if (valence === 1 && arousal === 0) {
+    // No sound: Use a neutral color
+    endColor = [211, 211, 211]; // Light grey
+  } else {
+    // Sound is present: Change color based on valence and arousal
+    if (valence >= 0.96 && energy >= 0.01){
+      // Happier sound: warmer colors
+      endColor = [242, 134, 81]; // Example warm color (orange)
+      console.log('오렌지~!')
+    } else if (valence < 0.96 && energy >= 0.01) {
+      // Sadder sound: colder colors
+      endColor = [82, 109, 242]; // Example cold color (blue)
+      console.log('블루~!')
+    } else {
+      endColor = [211, 211, 211];
+    }
+
+    // Adjust color intensity based on arousal
+    // endColor = endColor.map(c => c * (1 - arousal) + 255 * arousal); // Interpolate between the color and white based on arousal
+  }
+
+  const startColorRGB = `rgb(${startColor.join(',')})`;
+  const endColorRGB = `rgb(${endColor.join(',')})`;
+
+  // Set the gradient
+  container.style.backgroundImage = 
+    `linear-gradient(to right, ${startColorRGB}, ${endColorRGB})`;
+}
+
+
+
+function estimateEmotionValenceArousal(perceptualSpread, perceptualSharpness, spectralFlatness, spectralKurtosis, spectralCentroid) {
+
+  // Valence calculations
+  const valenceWeightCentroid = 0.1;
+  const valenceWeightFlatness = -0.2;
+  let valenceScore = (spectralCentroid * valenceWeightCentroid) + (spectralFlatness * valenceWeightFlatness);
+
+  // Arousal calculations
+  const arousalWeightSharpness = -0.4;
+  const arousalWeightSpread = 2;
+  const arousalWeightKurtosis = 0.3;
+  let arousalScore = (perceptualSharpness * arousalWeightSharpness) +
+                     (perceptualSpread * arousalWeightSpread) +
+                     (spectralKurtosis * arousalWeightKurtosis);
+
+  // Normalize or scale scores as needed
+  valenceScore = Math.tanh(valenceScore); // example normalization
+  arousalScore = Math.tanh(arousalScore); // example normalization
+  return {
+    valence: valenceScore,
+    arousal: arousalScore
+  };
+
+
+}
+
 
 
 
