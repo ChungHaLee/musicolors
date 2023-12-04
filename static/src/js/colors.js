@@ -538,7 +538,7 @@ function animateTimbre() {
       deleteBasics();
       applyTimbre();
       let emotionScores = estimateEmotionValenceArousal(richness, sharpness, roughness, kurtosis, warmth);
-      changeBGColor(emotionScores.valence, emotionScores.arousal);
+      // changeBGColor(emotionScores.valence, emotionScores.arousal);
     }
   }
   update();
