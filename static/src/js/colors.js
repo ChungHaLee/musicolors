@@ -661,5 +661,4 @@ animateTimbre();
 
 
 
-
 export { init, render, deleteBasics, createVanilla, applyPitch, applyEnergy, applyTimbre, animatePitch, animateEnergy, animateTimbre, update }
