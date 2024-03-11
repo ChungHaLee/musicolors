@@ -42,7 +42,7 @@ if (navigator.getUserMedia) {
 
           bufferLength = analyser.frequencyBinCount;
           dataArray = new Uint8Array(bufferLength);
-          // pitchDetector();
+          pitchDetector();
 
 
         } // end fn stream
@@ -64,6 +64,7 @@ if (navigator.getUserMedia) {
           }
       })
       meyda_analyser.start();
+
     },
     function(err) {
       console.log("The following error occured: " + err.name)

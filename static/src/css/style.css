@@ -1,3 +1,12 @@
+@keyframes slideGradient {
+    0% { background-position: 100% 0; }
+    100% { background-position: 0 0; }
+}
+
+/* .background-animation {
+    animation: slideGradient 2s ease-in-out forwards;
+} */
+
 body {
     margin: 0px;
     overflow: hidden;
@@ -27,9 +36,10 @@ canvas {
     margin-top: -3%;
 
     overflow: hidden;
-    /* animation: movingGradient 10s linear infinite; */
-    transition: background-image 10s ease-in-out;
-    background: white;
+    /* background: linear-gradient(90deg, #ffc0f9 0%, #bdc6ff 100%); */
+    animation: movingGradient 5s linear infinite;
+
+    transition: background-image 5s ease-in-out;
     background-size: 400% 400%;
   }
   

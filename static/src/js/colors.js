@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { energy, roughness, warmth, richness, sharpness, kurtosis,
+import { pitchDetector, energy, roughness, warmth, richness, sharpness, kurtosis,
          dataArray, analyser, realpitch, realoctave } from './audio.js'
 
 import { Noise } from 'noisejs';
@@ -22,6 +22,19 @@ let hex1, hex2;
 let hue, saturation, luminance;
 
 var noise = new Noise(Math.random());
+
+const pastelColors = [
+  'rgba(238, 233, 233, 1)', // Color for 0
+  'rgba(255, 179, 186, 1)', // Color for 1
+  'rgba(255, 223, 186, 1)', // Color for 2
+  'rgba(255, 255, 186, 1)', // Color for 3
+  'rgba(186, 255, 201, 1)', // Color for 4
+  'rgba(186, 225, 255, 1)', // Color for 5
+  'rgba(255, 179, 255, 1)', // Color for 6
+  'rgba(255, 209, 220, 1)', // Color for 7
+  'rgba(217, 255, 179, 1)', // Color for 8
+  'rgba(179, 217, 255, 1)'  // Color for 9
+];
 
 
 
@@ -154,7 +167,7 @@ function getRandomHexColor() {
 
 
 function getColorByPitch(pitch) {
-
+  
   // Define the rainbow colors for the notes Do to Si
   const rainbowColors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#8B00FF'];
 
@@ -166,7 +179,7 @@ function getColorByPitch(pitch) {
   const noteNames = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   
   let pitchIndex = noteNames.indexOf(pitch);
-
+  
   size = energy;
   if (size < 0.01) {
     size * 40;
@@ -346,7 +359,6 @@ function applyEnergy(){
 
 
 function applyTimbre() {
-
   // Use an exponential scaling function based on "energy"
   let scaleFactor;
   if (energy < 0.001) {
@@ -359,7 +371,9 @@ function applyTimbre() {
     scaleFactor = Math.min(linearComponent + exponentialComponent, 2000); // Limit the maximum size change
   }
 
-  
+
+  // addToColorTransitionQueue(realoctave)
+  // startColorTransition();
   size = scaleFactor
 
   hue = warmth;
@@ -537,8 +551,7 @@ function animateTimbre() {
       analyser.getByteFrequencyData(dataArray);
       deleteBasics();
       applyTimbre();
-      let emotionScores = estimateEmotionValenceArousal(richness, sharpness, roughness, kurtosis, warmth);
-      // changeBGColor(emotionScores.valence, emotionScores.arousal);
+
     }
   }
   update();
@@ -565,86 +578,7 @@ function deleteBasics(){
 };
 
 
-function changeBGColor(valence, arousal) {
-  const startColor = [255, 255, 255]; // White as a neutral start color
 
-  // Normalize valence and arousal to be in the range of 0 to 1
-  valence = (valence + 1) / 2; // Now 0 (sad) to 1 (happy)
-  arousal = (arousal + 1) / 2; // Now 0 (low arousal) to 1 (high arousal)
-  console.log(valence, arousal)
-  let endColor;
-
-  // Check for the 'no sound' state
-  if (valence === 1 && arousal === 0) {
-    // No sound: Use a neutral color
-    endColor = [211, 211, 211]; // Light grey
-  } else {
-    // Sound is present: Change color based on valence and arousal
-    if (valence >= 0.96 && energy >= 0.01){
-      // Happier sound: warmer colors
-      endColor = [242, 134, 81]; // Example warm color (orange)
-      console.log('오렌지~!')
-    } else if (valence < 0.96 && energy >= 0.01) {
-      // Sadder sound: colder colors
-      endColor = [82, 109, 242]; // Example cold color (blue)
-      console.log('블루~!')
-    } else {
-      endColor = [211, 211, 211];
-    }
-
-    // Adjust color intensity based on arousal
-    // endColor = endColor.map(c => c * (1 - arousal) + 255 * arousal); // Interpolate between the color and white based on arousal
-  }
-
-  const startColorRGB = `rgb(${startColor.join(',')})`;
-  const endColorRGB = `rgb(${endColor.join(',')})`;
-
-  // Set the gradient
-  container.style.backgroundImage = 
-    `linear-gradient(to right, ${startColorRGB}, ${endColorRGB})`;
-}
-
-
-
-function estimateEmotionValenceArousal(perceptualSpread, perceptualSharpness, spectralFlatness, spectralKurtosis, spectralCentroid) {
-
-  // Valence calculations
-  const valenceWeightCentroid = 0.1;
-  const valenceWeightFlatness = -0.2;
-  let valenceScore = (spectralCentroid * valenceWeightCentroid) + (spectralFlatness * valenceWeightFlatness);
-
-  // Arousal calculations
-  const arousalWeightSharpness = -0.4;
-  const arousalWeightSpread = 2;
-  const arousalWeightKurtosis = 0.3;
-  let arousalScore = (perceptualSharpness * arousalWeightSharpness) +
-                     (perceptualSpread * arousalWeightSpread) +
-                     (spectralKurtosis * arousalWeightKurtosis);
-
-  // Normalize or scale scores as needed
-  valenceScore = Math.tanh(valenceScore); // example normalization
-  arousalScore = Math.tanh(arousalScore); // example normalization
-  return {
-    valence: valenceScore,
-    arousal: arousalScore
-  };
-
-
-}
-
-
-
-
-// Update the camera aspect ratio when the window is resized
-// window.addEventListener("resize", () => {
-//   const newWidth = container.clientWidth;
-//   const newHeight = container.clientHeight;
-
-//   camera.aspect = newWidth / newHeight;
-//   camera.updateProjectionMatrix();
-
-//   renderer.setSize(newWidth, newHeight);
-// });
 
 
 window.addEventListener('dblclick', () => {
@@ -654,6 +588,62 @@ window.addEventListener('dblclick', () => {
       document.exitFullscreen()
   }
 })
+
+
+let colorTransitionQueue = [0, 0]; // Array to store pairs of numbers for color transitions
+
+// function addToColorTransitionQueue(newNumber) {
+//   // Ensure the new number is within the valid range
+//   newNumber = (newNumber >= 0 && newNumber < pastelColors.length) ? newNumber : 0;
+
+//   colorTransitionQueue.push(newNumber);
+
+//   if (colorTransitionQueue.length === 2) {
+//     startColorTransition();
+//   }
+// }
+
+
+
+// function startColorTransition() {
+//   if (colorTransitionQueue.length < 2) {
+//     // Not enough elements for a transition
+//     return;
+//   }
+
+//   // Access the last two elements in the queue for current and next numbers
+//   const currentNumber = colorTransitionQueue[colorTransitionQueue.length - 2];
+//   const nextNumber = colorTransitionQueue[colorTransitionQueue.length - 1];
+
+//   const currentColor = pastelColors[currentNumber];
+//   const nextColor = pastelColors[nextNumber];
+
+//   // Set the new background with linear gradient
+//   document.body.style.background = `linear-gradient(90deg, ${currentColor}, ${nextColor})`;
+//   document.body.style.backgroundSize = '200% 100%'; // Double the background size for the sliding effect
+//   document.body.style.transition = 'none'; // Remove any existing transition
+
+//   // Add the animation class to start the sliding effect
+//   document.body.classList.add('background-animation');
+
+//   // Remove the class after the animation ends and process the next item in the queue
+//   setTimeout(() => {
+//     document.body.classList.remove('background-animation');
+//     document.body.style.background = `linear-gradient(90deg, ${nextColor} 0%, ${nextColor} 100%)`;
+
+//     // Remove the processed pair from the queue and start the next transition
+//     colorTransitionQueue.shift();
+//     if (colorTransitionQueue.length >= 2) {
+//       startColorTransition();
+//     }
+//   }, 2000); // Match this duration to the animation duration
+// }
+
+
+
+
+
+
 
 
 init();
