@@ -6,7 +6,8 @@
 <br><br>
 The source of the visualization comes from the user audio, so it is totally up to your sound (*e.g. singing voice to the mic.*) Feel free to try visual effects and see thorugh your sound!
 <br><br>
-
+DEMO Page: http://www.musicolors.art/
+<br><br>
 ## Installation
 
 ```
