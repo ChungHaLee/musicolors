@@ -18,6 +18,12 @@ body {
     -o-animation: gradient 15s ease infinite; /* 구 Opera 브라우저를 위한 설정 */
     animation: gradient 15s ease infinite; /* 표준 설정 */
     overflow: hidden;
+    -ms-overflow-style: none;  /* IE와 Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
 }
 
 canvas {
