@@ -52,8 +52,11 @@ now you can also see the dynamic changing background based your time zone.
 <br>
 check out the visuals of changing dynamically with the specific time of the day.
 <br>
-// pitch visualization
+
+```javascript
+// change background by the time
 musicolors.updateBackground();
+```
 
 | morning | afternoon | evening | night |
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
