@@ -5,7 +5,8 @@ module.exports = {
   // Entry points for your application
   entry: {
     colors: path.resolve(__dirname, "src", "js", "colors.js"),
-    audio: path.resolve(__dirname, "src", "js", "audio.js")
+    audio: path.resolve(__dirname, "src", "js", "audio.js"),
+    timebytime: path.resolve(__dirname, "src", "js", "timebytime.js")
   },
   mode: "development",
   target: "web",

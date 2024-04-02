@@ -3,18 +3,26 @@
     100% { background-position: 0 0; }
 }
 
-/* .background-animation {
-    animation: slideGradient 2s ease-in-out forwards;
-} */
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 body {
-    margin: 0px;
+    background-size: 1600% 1600%; /* 큰 배경 크기로 설정하여 애니메이션 효과가 부드럽게 보이도록 합니다. */
+    
+    -webkit-animation: gradient 15s ease infinite; /* Safari와 같은 웹킷 기반 브라우저를 위한 설정 */
+    -moz-animation: gradient 15s ease infinite; /* 구 Firefox 브라우저를 위한 설정 */
+    -o-animation: gradient 15s ease infinite; /* 구 Opera 브라우저를 위한 설정 */
+    animation: gradient 15s ease infinite; /* 표준 설정 */
     overflow: hidden;
-  }
+}
 
 canvas {
     /* display: block; */
-    margin-top: -3%;
+    margin-top: -10%;
     top: 0;
     left: 0;
     width: 100%;
@@ -33,7 +41,7 @@ canvas {
     margin: 0;
     padding: 0;
 
-    margin-top: -3%;
+    margin-top: -10%;
 
     overflow: hidden;
     /* background: linear-gradient(90deg, #ffc0f9 0%, #bdc6ff 100%); */

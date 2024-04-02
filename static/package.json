@@ -1,6 +1,6 @@
 {
   "name": "musicolors",
-  "version": "0.1.6",
+  "version": "1.0.1",
   "description": "A Javascript Library for Music Visualization Using Pitch, Energy, and Timbre. 🪄",
   "main": "colors.js",
   "scripts": {
@@ -11,12 +11,11 @@
   },
   "keywords": [
     "music-visualization",
-    "audio-features",
+    "sound-visualization",
     "music-information-retrieval",
-    "mir",
     "visualization"
   ],
-  "author": "ChungHaLee",
+  "author": "ChungHaLee <chunghalee@gm.gist.ac.kr> (https://chunghalee.com)",
   "license": "MIT",
   "dependencies": {
     "html-webpack-plugin": "^5.5.3",
@@ -26,6 +25,7 @@
     "np": "^8.0.4",
     "pitchy": "^4.0.7",
     "three": "^0.148.0",
+    "version": "^0.1.2",
     "webpack": "^5.88.2"
   },
   "repository": {
@@ -33,7 +33,8 @@
     "url": "git+https://github.com/ChungHaLee/musicolors.git"
   },
   "bugs": {
-    "url": "https://github.com/ChungHaLee/musicolors/issues"
+    "url": "https://github.com/ChungHaLee/musicolors/issues",
+    "email": "chunghalee@gm.gist.ac.kr"
   },
   "homepage": "https://github.com/ChungHaLee/musicolors#readme",
   "devDependencies": {
