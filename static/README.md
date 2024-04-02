@@ -22,13 +22,6 @@ $ npm i musicolors
 import musicolors from musicolors
 ```
 
-#### Initial Step
-you need this step when you want to visualize the object for the first time.
-
-```javascript
-musicolors.init();
-musicolors.createVanilla();
-```
 
 #### Music Visualization
 you can visualize by three features of music: pitch, energy and timbre.
@@ -54,7 +47,7 @@ check out the visuals of changing dynamically with the specific time of the day.
 <br>
 
 ```javascript
-// change background by the time
+// changes the background by the time, this only works in the browser settings.
 musicolors.updateBackground();
 ```
 
