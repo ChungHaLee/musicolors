@@ -51,6 +51,10 @@ musicolors.animateTimbre();
 now you can also see the dynamic changing background based your time zone.
 <br>
 check out the visuals of changing dynamically with the specific time of the day.
+<br>
+// pitch visualization
+musicolors.updateBackground();
+
 | morning | afternoon | evening | night |
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 | <img width="225" height="225" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/c1c11986-edd1-48b0-b1e6-8b364aa9bf08"> |  <img width="225" height="225" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/51317d15-4059-4931-a37b-04f7833367f8"> | <img width="225" height="225" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/fab0e085-f779-448a-9eef-63ab8f5a0bd7"> | <img width="225" height="225" alt="image" src="https://github.com/ChungHaLee/musicolors/assets/59073612/36f0377e-eae2-49e9-a5f0-913cdb8db61f"> | 

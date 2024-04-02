@@ -40,6 +40,13 @@ import {
 
 
 
+import {
+  colors,
+  updateBackground
+} from './src/js/timebytime'
+
+
+
 // Define your JavaScript API module
 const musicolors = {
   // Exported functions or properties
@@ -50,6 +57,7 @@ const musicolors = {
   applyTimbre: applyTimbre,
   render: render,
   deleteBasics: deleteBasics,
+  updateBackground: updateBackground,
 
   // Exported variables or constants
   audioContext: audioContext,
@@ -67,7 +75,8 @@ const musicolors = {
   update: update,
   animatePitch: animatePitch,
   animateEnergy: animateEnergy,
-  animateTimbre: animateTimbre
+  animateTimbre: animateTimbre,
+  colors: colors
 
 };
 

@@ -8,7 +8,6 @@ const colors = {
 function updateBackground() {
     const now = new Date();
     const hours = now.getHours();
-    console.log(hours)
     document.body.style.background = hours >= 6 && hours < 12 ? colors.morning :
                                      hours >= 12 && hours < 17 ? colors.afternoon :
                                      hours >= 17 && hours < 22 ? colors.evening :
