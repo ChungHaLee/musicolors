@@ -4,9 +4,11 @@
 
 **musicolors** is a javascript music visualization library, using the pitch, energy, and timbral features of the music.
 <br><br>
-The source of the visualization comes from the user audio, so it is totally up to your sound (*e.g. singing voice to the mic.*) Feel free to try visual effects and see thorugh your sound!
+The source of the visualization comes from the user audio, so it is totally up to your sound (*e.g. singing voice to the mic.*). Feel free to try visual effects and see through your sound!
 <br><br>
-DEMO Page: http://www.musicolors.art/
+📄 Paper Published on arXiv! : [https://arxiv.org/abs/2503.14220](https://arxiv.org/abs/2503.14220)
+<br><br>
+We’ve published a paper on arXiv detailing the development of **musicolors** and the results of the user study. Check it out to learn more about our system design, implementation process, and key findings from the experiments.
 <br><br>
 ## Installation
 
