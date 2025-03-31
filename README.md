@@ -1,6 +1,7 @@
 # musicolors
-
-<img width="797" alt="logo" src="https://github.com/ChungHaLee/musicolors/assets/59073612/d9dc0c54-4235-4061-bee0-f7d80b9d2dd1">
+<p align="center">
+<img width="500" alt="logo" src="https://github.com/user-attachments/assets/ac153cc7-1908-41b3-aad0-1fadf6dcb6d0">
+</p>
 
 **musicolors** is a javascript music visualization library, using the pitch, energy, and timbral features of the music.
 <br><br>
