@@ -18,9 +18,11 @@ To use the demo, please follow the steps below to allow Chrome to access your au
 
 4. **Enable the setting and restart Chrome.**
 
+
 The source of the visualization comes from the user audio, so it is totally up to your sound (*e.g. singing voice to the mic.*). Feel free to try visual effects and see through your sound!
-<br><br>
-<br><br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 📄 Paper Published on arXiv! : [https://arxiv.org/abs/2503.14220](https://arxiv.org/abs/2503.14220)
 <br><br>
 We’ve published a paper on arXiv detailing the development of **musicolors** and the results of the user study. Check it out to learn more about our system design, implementation process, and key findings from the experiments.
