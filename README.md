@@ -5,7 +5,21 @@
 
 **musicolors** is a javascript music visualization library, using the pitch, energy, and timbral features of the music.
 <br><br>
+🎁 Try the musicolors DEMO here: http://www.musicolors.art/
+<br><br>
+
+To use the demo, please follow the steps below to allow Chrome to access your audio input without restrictions:
+
+1. Open **chrome://flags/** in your Chrome browser.
+
+2. Search for the **Insecure origins treated as secure** setting.
+
+3. In the input field, **enter the demo URL: http://www.musicolors.art/**
+
+4. **Enable the setting and restart Chrome.**
+
 The source of the visualization comes from the user audio, so it is totally up to your sound (*e.g. singing voice to the mic.*). Feel free to try visual effects and see through your sound!
+<br><br>
 <br><br>
 📄 Paper Published on arXiv! : [https://arxiv.org/abs/2503.14220](https://arxiv.org/abs/2503.14220)
 <br><br>
